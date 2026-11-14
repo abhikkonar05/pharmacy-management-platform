@@ -1,0 +1,42 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: pharmacy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-pharmacy_db}
+      POSTGRES_USER: ${DB_USER:-pharmacy_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    ports:
+      - "55433:5432"
+    volumes:
+      - pharmacy_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pharmacy_user} -d ${DB_NAME:-pharmacy_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharmacy-api
+    restart: unless-stopped
+    environment:
+      DB_NAME: ${DB_NAME:-pharmacy_db}
+      DB_USER: ${DB_USER:-pharmacy_user}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DEBUG: "False"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pharmacy_data:

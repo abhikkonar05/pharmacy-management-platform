@@ -14,7 +14,8 @@ DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
-        "ALLOWED_HOSTS", "localhost,127.0.0.1"
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1"
     ).split(",")
     if host.strip()
 ]
@@ -28,12 +29,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "rest_framework",
-    "medicines.apps.MedicinesConfig",
-    "batches.apps.BatchesConfig",
-    "stock.apps.StockConfig",
-    "reports.apps.ReportsConfig",
-    "health.apps.HealthConfig",
     "rest_framework.authtoken",
+
+    "medicines",
+    "batches",
+    "stock",
+    "reports",
+    "health",
 ]
 
 MIDDLEWARE = [
@@ -66,9 +68,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# PostgreSQL will be used when database environment variables are set.
-# SQLite is only a temporary local fallback for the initial setup.
-
 if os.environ.get("DB_NAME"):
     DATABASES = {
         "default": {
@@ -78,7 +77,6 @@ if os.environ.get("DB_NAME"):
             "PASSWORD": os.environ.get("DB_PASSWORD"),
             "HOST": os.environ.get("DB_HOST", "localhost"),
             "PORT": os.environ.get("DB_PORT", "5432"),
-            "CONN_MAX_AGE": 60,
         }
     }
 else:
@@ -109,9 +107,11 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
+
 USE_TZ = True
 
 STATIC_URL = "static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -122,10 +122,9 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-    "rest_framework.authentication.TokenAuthentication",
-],
-
-"DEFAULT_PERMISSION_CLASSES": [
-    "rest_framework.permissions.IsAuthenticated",
-],
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }

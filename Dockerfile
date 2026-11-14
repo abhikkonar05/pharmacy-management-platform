@@ -29,5 +29,5 @@ USER app
 # Application port
 EXPOSE 8000
 
-# Start Django using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "config.wsgi:application"]
+# Start Django using Gunicorn with automatic migrations and superuser check
+CMD ["sh", "-c", "python manage.py migrate && python manage.py shell -c \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='raj2005').exists() or User.objects.create_superuser('raj2005', 'admin@example.com', 'Abhik005')\" && gunicorn --bind 0.0.0.0:8000 --workers 2 config.wsgi:application"]

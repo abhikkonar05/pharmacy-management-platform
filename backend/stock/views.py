@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
 from .models import StockMovement
@@ -10,7 +10,7 @@ from .services import apply_stock_movement
 class StockMovementListCreateView(generics.ListCreateAPIView):
 
     serializer_class = StockMovementSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return StockMovement.objects.select_related(

@@ -3,7 +3,7 @@ from django.db.models import Sum, Count
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 from medicines.models import Medicine
 from batches.models import Batch
@@ -11,7 +11,7 @@ from batches.models import Batch
 
 class StockReportView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 

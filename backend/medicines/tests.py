@@ -1,4 +1,5 @@
 
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -8,6 +9,15 @@ from .models import Medicine
 class MedicineAPITests(APITestCase):
 
     def setUp(self):
+        User = get_user_model()
+
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="TestPassword123!"
+        )
+
+        self.client.force_authenticate(user=self.user)
+
         self.medicine = Medicine.objects.create(
             medicine_code="MED-1001",
             name="Paracetamol",
@@ -49,6 +59,7 @@ class MedicineAPITests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         self.assertTrue(
             Medicine.objects.filter(medicine_code="MED-1002").exists()
         )
@@ -72,7 +83,10 @@ class MedicineAPITests(APITestCase):
             format="json"
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
 
     def test_retrieve_medicine(self):
         response = self.client.get(self.detail_url)
@@ -91,12 +105,18 @@ class MedicineAPITests(APITestCase):
 
         self.medicine.refresh_from_db()
 
-        self.assertEqual(self.medicine.name, "Paracetamol Updated")
+        self.assertEqual(
+            self.medicine.name,
+            "Paracetamol Updated"
+        )
 
     def test_delete_medicine(self):
         response = self.client.delete(self.detail_url)
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
 
         self.assertFalse(
             Medicine.objects.filter(id=self.medicine.id).exists()
